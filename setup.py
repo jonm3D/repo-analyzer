@@ -1,13 +1,17 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="repo-analyzer",
-    version="0.1",
+    name='repo_analyzer',
+    version='0.1',
     packages=find_packages(),
+    install_requires=[],
     entry_points={
         'console_scripts': [
-            'repo-analyzer=repo_analyzer.cli:main',
+            'repo_analyzer=repo_analyzer.analyzer:main',
         ],
     },
+    include_package_data=True,
+    package_data={
+        '': ['repo_analyzer_config.txt'],
+    },
 )
-
