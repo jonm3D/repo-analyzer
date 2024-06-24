@@ -3,25 +3,28 @@ import argparse
 from .file_ops import read_file, read_config_file
 from .tree import generate_tree
 
-def find_files(directory, filenames, include_hidden):
+def find_files(directory, filenames, extensions, include_hidden):
     """
-    Find and return a list of files in the directory matching the filenames.
+    Find and return a list of files in the directory matching the filenames or extensions.
 
     Parameters:
     directory (str): The root directory to start searching for files.
     filenames (list): List of filenames to include in the output.
+    extensions (tuple): A tuple of file extensions to include.
     include_hidden (bool): Whether to include hidden files.
 
     Returns:
     list: List of full paths to files that match the criteria.
     """
     files_to_include = []
+
     for root, _, files in os.walk(directory):
         if not include_hidden:
             files = [file for file in files if not file.startswith('.')]
         for file in files:
-            if file in filenames:
+            if (filenames and file in filenames) or (not filenames and file.endswith(extensions)):
                 files_to_include.append(os.path.join(root, file))
+    
     return files_to_include
 
 def concatenate_files(files_to_include, output_file, max_chars, main_file=None):
@@ -66,7 +69,7 @@ def main():
     parser.add_argument("--tree_depth", type=int, default=10, help="Maximum depth of the directory tree to include in the output file")
     parser.add_argument("--include_hidden", action='store_true', help="Include hidden files and directories")
     parser.add_argument("--max_items", type=int, default=50, help="Maximum number of items to include in each directory to avoid clutter")
-    parser.add_argument("--config_file", type=str, default="files_to_include.txt", help="Path to the configuration file with filenames to include in the output")
+    parser.add_argument("--config_file", type=str, help="Path to the configuration file with filenames to include in the output")
 
     args = parser.parse_args()
 
@@ -78,7 +81,13 @@ def main():
     max_items = args.max_items
     config_file = args.config_file
 
-    filenames = read_config_file(config_file)
+    if config_file:
+        filenames = read_config_file(config_file)
+        if filenames is None:
+            print(f"Configuration file {config_file} not found or is empty.")
+            filenames = []
+    else:
+        filenames = None
 
     project_name = os.path.basename(os.path.abspath(directory))
     header = f"""
@@ -114,7 +123,10 @@ Please perform the following tasks:
         outfile.write("\n\nConcatenated Files:\n")
 
     print(f"Finding files to concatenate in {directory}...")
-    files_to_include = find_files(directory, filenames, include_hidden)
+    files_to_include = find_files(directory, filenames, ('.py', '.m', '.r', '.ipynb', '.html', '.md', '.txt'), include_hidden)
+
+    if not files_to_include:
+        print("No files found to include based on the configuration.")
 
     print(f"Concatenating files for {directory}...")
     concatenate_files(files_to_include, output_file, max_chars, main_file=main_file)
