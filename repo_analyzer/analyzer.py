@@ -74,6 +74,9 @@ def main():
     args = parser.parse_args()
 
     directory = args.directory
+    if directory == '.':
+        directory = os.getcwd()
+
     main_file = args.main_file
     max_chars = args.max_chars
     tree_depth = args.tree_depth
@@ -107,8 +110,9 @@ Please perform the following tasks:
 *Prompt Engineering Instructions*:
 - **Core Function Focus**: Prioritize analysis on core functions, such as scientific computations, large computations, or scripts that manage multiple functions. Avoid spending time on wrapper functions or utility functions unless they play a significant role.
 - **Execution Flow**: Clearly outline the execution flow starting from the main file to other dependent scripts.
-- **File Boundaries**: Recognize the start of a new file with the pattern `--- <file_path> ---`.
+- **File Boundaries**: Recognize the start of a new file with the pattern --- <file_path> ---.
 - **Avoid Redundancy**: Do not reproduce the code verbatim. Instead, focus on storing and utilizing the code structure and logic in your memory for this analysis.
+
 """
 
     output_file = os.path.join(directory, os.path.basename(directory) + "_summary.txt")
