@@ -98,7 +98,7 @@ def main():
     max_items = args.max_items
     config_file = args.config_file
 
-    valid_extensions = {'.txt', '.py', '.md', '.json', '.xml', '.html', '.css', '.js', '.java', '.cpp', '.c', '.hpp', '.h'}
+    valid_extensions = {'.txt', '.py', '.md', '.json', '.xml', '.html', '.css', '.js', '.java', '.cpp', '.c', '.hpp', '.h', '.m', 'ipynb'}
 
     if config_file:
         config_file = os.path.abspath(config_file)
