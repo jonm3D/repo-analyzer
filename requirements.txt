@@ -1,7 +1,2 @@
-argparse
-fnmatch
-os
-time
-setuptools
 flake8
 black
