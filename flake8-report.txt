@@ -1,0 +1,41 @@
+repo_analyzer/analyzer.py:8:1: E302 expected 2 blank lines, found 1
+repo_analyzer/analyzer.py:8:89: E501 line too long (105 > 88 characters)
+repo_analyzer/analyzer.py:10:89: E501 line too long (118 > 88 characters)
+repo_analyzer/analyzer.py:29:89: E501 line too long (112 > 88 characters)
+repo_analyzer/analyzer.py:31:89: E501 line too long (137 > 88 characters)
+repo_analyzer/analyzer.py:50:1: E302 expected 2 blank lines, found 1
+repo_analyzer/analyzer.py:78:89: E501 line too long (95 > 88 characters)
+repo_analyzer/analyzer.py:91:1: E302 expected 2 blank lines, found 1
+repo_analyzer/analyzer.py:95:89: E501 line too long (120 > 88 characters)
+repo_analyzer/analyzer.py:97:89: E501 line too long (104 > 88 characters)
+repo_analyzer/analyzer.py:98:89: E501 line too long (135 > 88 characters)
+repo_analyzer/analyzer.py:99:89: E501 line too long (141 > 88 characters)
+repo_analyzer/analyzer.py:100:89: E501 line too long (115 > 88 characters)
+repo_analyzer/analyzer.py:101:89: E501 line too long (144 > 88 characters)
+repo_analyzer/analyzer.py:102:89: E501 line too long (139 > 88 characters)
+repo_analyzer/analyzer.py:103:89: E501 line too long (140 > 88 characters)
+repo_analyzer/analyzer.py:116:89: E501 line too long (138 > 88 characters)
+repo_analyzer/analyzer.py:124:89: E501 line too long (112 > 88 characters)
+repo_analyzer/analyzer.py:125:89: E501 line too long (95 > 88 characters)
+repo_analyzer/analyzer.py:131:89: E501 line too long (109 > 88 characters)
+repo_analyzer/analyzer.py:132:89: E501 line too long (93 > 88 characters)
+repo_analyzer/analyzer.py:139:89: E501 line too long (451 > 88 characters)
+repo_analyzer/analyzer.py:149:89: E501 line too long (113 > 88 characters)
+repo_analyzer/analyzer.py:150:89: E501 line too long (204 > 88 characters)
+repo_analyzer/analyzer.py:151:89: E501 line too long (190 > 88 characters)
+repo_analyzer/analyzer.py:154:89: E501 line too long (260 > 88 characters)
+repo_analyzer/analyzer.py:155:89: E501 line too long (112 > 88 characters)
+repo_analyzer/analyzer.py:156:89: E501 line too long (94 > 88 characters)
+repo_analyzer/analyzer.py:157:89: E501 line too long (162 > 88 characters)
+repo_analyzer/analyzer.py:162:1: W293 blank line contains whitespace
+repo_analyzer/analyzer.py:164:89: E501 line too long (105 > 88 characters)
+repo_analyzer/analyzer.py:165:1: W293 blank line contains whitespace
+repo_analyzer/analyzer.py:173:89: E501 line too long (123 > 88 characters)
+repo_analyzer/analyzer.py:183:1: E305 expected 2 blank lines after class or function definition, found 1
+repo_analyzer/file_ops.py:3:1: E302 expected 2 blank lines, found 1
+repo_analyzer/file_ops.py:27:1: E302 expected 2 blank lines, found 1
+repo_analyzer/tree.py:3:1: E302 expected 2 blank lines, found 1
+repo_analyzer/tree.py:3:89: E501 line too long (91 > 88 characters)
+repo_analyzer/tree.py:11:89: E501 line too long (91 > 88 characters)
+repo_analyzer/tree.py:19:89: E501 line too long (101 > 88 characters)
+repo_analyzer/tree.py:29:89: E501 line too long (106 > 88 characters)

@@ -1,6 +1,9 @@
 import os
 
-def generate_tree(directory, depth=3, current_depth=0, max_items=50, include_hidden=False):
+
+def generate_tree(
+    directory, depth=3, current_depth=0, max_items=50, include_hidden=False
+):
     """
     Generate a tree structure of the directory up to a specified depth.
 
@@ -16,17 +19,25 @@ def generate_tree(directory, depth=3, current_depth=0, max_items=50, include_hid
     """
     tree = []
     with os.scandir(directory) as entries:
-        items = [entry.name for entry in entries if include_hidden or not entry.name.startswith('.')]
+        items = [
+            entry.name
+            for entry in entries
+            if include_hidden or not entry.name.startswith(".")
+        ]
     items.sort()
     if len(items) > max_items:
         items = items[:max_items]
-        items.append('...')  # Indicate that there are more items
+        items.append("...")  # Indicate that there are more items
     for item in items:
         item_path = os.path.join(directory, item)
         if os.path.isdir(item_path):
             tree.append(f"{'  ' * current_depth}|-- {item}/")
             if current_depth < depth - 1:
-                tree.extend(generate_tree(item_path, depth, current_depth + 1, max_items, include_hidden))
+                tree.extend(
+                    generate_tree(
+                        item_path, depth, current_depth + 1, max_items, include_hidden
+                    )
+                )
         else:
             tree.append(f"{'  ' * current_depth}|-- {item}")
     return tree

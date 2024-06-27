@@ -5,7 +5,10 @@ import fnmatch
 from .file_ops import read_file, read_config_file
 from .tree import generate_tree
 
-def find_files_by_config(directory, include_patterns, ignore_patterns, include_hidden, valid_extensions):
+
+def find_files_by_config(
+    directory, include_patterns, ignore_patterns, include_hidden, valid_extensions
+):
     """
     Find and return a list of text and code files in the directory matching the include patterns from the config file,
     while excluding those matching the ignore patterns.
@@ -23,12 +26,18 @@ def find_files_by_config(directory, include_patterns, ignore_patterns, include_h
     files_to_include = []
     for root, _, files in os.walk(directory):
         if not include_hidden:
-            files = [file for file in files if not file.startswith('.')]
+            files = [file for file in files if not file.startswith(".")]
         for file in files:
             file_path = os.path.join(root, file)
-            if any(fnmatch.fnmatch(file_path, os.path.join(directory, pattern)) for pattern in ignore_patterns):
+            if any(
+                fnmatch.fnmatch(file_path, os.path.join(directory, pattern))
+                for pattern in ignore_patterns
+            ):
                 continue
-            if not include_patterns or any(fnmatch.fnmatch(file_path, os.path.join(directory, pattern)) for pattern in include_patterns):
+            if not include_patterns or any(
+                fnmatch.fnmatch(file_path, os.path.join(directory, pattern))
+                for pattern in include_patterns
+            ):
                 if os.path.splitext(file)[1] in valid_extensions:
                     files_to_include.append(file_path)
 
@@ -47,6 +56,7 @@ def find_files_by_config(directory, include_patterns, ignore_patterns, include_h
 
     return sorted_files
 
+
 def concatenate_files(files_to_include, output_file, max_chars, main_file=None):
     """
     Concatenate contents of specified files into an output file.
@@ -61,7 +71,7 @@ def concatenate_files(files_to_include, output_file, max_chars, main_file=None):
     if os.path.exists(output_file):
         files_to_include = [f for f in files_to_include if f != output_file]
 
-    with open(output_file, 'a') as outfile:
+    with open(output_file, "a") as outfile:
         if main_file and main_file in files_to_include:
             outfile.write(f"\n\n--- {main_file} (Main File) ---\n\n")
             content, char_count = read_file(main_file, max_chars, char_count)
@@ -75,7 +85,9 @@ def concatenate_files(files_to_include, output_file, max_chars, main_file=None):
             elapsed_time = time.time() - start_time
 
             if elapsed_time > 10:
-                print(f"Skipping file {file_path} (took too long: {elapsed_time:.2f} seconds)")
+                print(
+                    f"Skipping file {file_path} (took too long: {elapsed_time:.2f} seconds)"
+                )
                 continue
 
             if content:
@@ -88,19 +100,57 @@ def concatenate_files(files_to_include, output_file, max_chars, main_file=None):
 
     print(f"Files concatenated successfully, total characters: {char_count}")
 
+
 def main():
     """
     Main function to parse arguments, generate directory tree, and concatenate files.
     """
-    parser = argparse.ArgumentParser(description="Analyze the structure and specific file types of a local repository.")
+    parser = argparse.ArgumentParser(
+        description="Analyze the structure and specific file types of a local repository."
+    )
     parser.add_argument("directory", type=str, help="The path to the local repository")
-    parser.add_argument("-m", "--main_file", type=str, help="The main file to prioritize in the output")
-    parser.add_argument("-c", "--max_chars", type=int, default=None, help="Maximum number of characters to include in the output file")
-    parser.add_argument("-t", "--tree_depth", type=int, default=10, help="Maximum depth of the directory tree to include in the output file")
-    parser.add_argument("-i", "--include_hidden", action='store_true', help="Include hidden files and directories")
-    parser.add_argument("-x", "--max_items", type=int, default=50, help="Maximum number of items to include in each directory to avoid clutter")
-    parser.add_argument("-n", "--include", type=str, help="Path to the configuration file with filename patterns to include in the output")
-    parser.add_argument("-g", "--ignore", type=str, help="Path to the configuration file with filename patterns to exclude from the output")
+    parser.add_argument(
+        "-m", "--main_file", type=str, help="The main file to prioritize in the output"
+    )
+    parser.add_argument(
+        "-c",
+        "--max_chars",
+        type=int,
+        default=None,
+        help="Maximum number of characters to include in the output file",
+    )
+    parser.add_argument(
+        "-t",
+        "--tree_depth",
+        type=int,
+        default=10,
+        help="Maximum depth of the directory tree to include in the output file",
+    )
+    parser.add_argument(
+        "-i",
+        "--include_hidden",
+        action="store_true",
+        help="Include hidden files and directories",
+    )
+    parser.add_argument(
+        "-x",
+        "--max_items",
+        type=int,
+        default=50,
+        help="Maximum number of items to include in each directory to avoid clutter",
+    )
+    parser.add_argument(
+        "-n",
+        "--include",
+        type=str,
+        help="Path to the configuration file with filename patterns to include in the output",
+    )
+    parser.add_argument(
+        "-g",
+        "--ignore",
+        type=str,
+        help="Path to the configuration file with filename patterns to exclude from the output",
+    )
 
     args = parser.parse_args()
 
@@ -113,7 +163,23 @@ def main():
     include_file = args.include
     ignore_file = args.ignore
 
-    valid_extensions = {'.txt', '.py', '.md', '.json', '.xml', '.html', '.css', '.js', '.java', '.cpp', '.c', '.hpp', '.h', '.m', 'ipynb'}
+    valid_extensions = {
+        ".txt",
+        ".py",
+        ".md",
+        ".json",
+        ".xml",
+        ".html",
+        ".css",
+        ".js",
+        ".java",
+        ".cpp",
+        ".c",
+        ".hpp",
+        ".h",
+        ".m",
+        "ipynb",
+    }
 
     include_patterns = []
     ignore_patterns = []
@@ -121,15 +187,27 @@ def main():
     if include_file:
         include_file = os.path.abspath(include_file)
         include_patterns = read_config_file(include_file)
-        if include_patterns is None or not include_patterns or all(name.isspace() for name in include_patterns):
-            print(f"Include file {include_file} not found, is empty, or only contains spaces.")
+        if (
+            include_patterns is None
+            or not include_patterns
+            or all(name.isspace() for name in include_patterns)
+        ):
+            print(
+                f"Include file {include_file} not found, is empty, or only contains spaces."
+            )
             include_patterns = []
 
     if ignore_file:
         ignore_file = os.path.abspath(ignore_file)
         ignore_patterns = read_config_file(ignore_file)
-        if ignore_patterns is None or not ignore_patterns or all(name.isspace() for name in ignore_patterns):
-            print(f"Ignore file {ignore_file} not found, is empty, or only contains spaces.")
+        if (
+            ignore_patterns is None
+            or not ignore_patterns
+            or all(name.isspace() for name in ignore_patterns)
+        ):
+            print(
+                f"Ignore file {ignore_file} not found, is empty, or only contains spaces."
+            )
             ignore_patterns = []
 
     project_name = os.path.basename(directory)
@@ -159,18 +237,22 @@ Please perform the following tasks:
 """
 
     output_file = os.path.join(directory, project_name + "_summary.txt")
-    
+
     print(f"Generating directory tree for {directory}...")
-    tree = generate_tree(directory, depth=tree_depth, max_items=max_items, include_hidden=include_hidden)
-    
-    with open(output_file, 'w') as outfile:
+    tree = generate_tree(
+        directory, depth=tree_depth, max_items=max_items, include_hidden=include_hidden
+    )
+
+    with open(output_file, "w") as outfile:
         outfile.write(header)
         outfile.write("Directory Structure:\n")
         outfile.write("\n".join(tree))
         outfile.write("\n\nConcatenated Files:\n")
 
     print(f"Finding files to concatenate in {directory}...")
-    files_to_include = find_files_by_config(directory, include_patterns, ignore_patterns, include_hidden, valid_extensions)
+    files_to_include = find_files_by_config(
+        directory, include_patterns, ignore_patterns, include_hidden, valid_extensions
+    )
 
     if not files_to_include:
         print("No files found to include based on the configuration.")
@@ -179,6 +261,7 @@ Please perform the following tasks:
     concatenate_files(files_to_include, output_file, max_chars, main_file=main_file)
 
     print(f"Output saved to {output_file}")
+
 
 if __name__ == "__main__":
     main()
