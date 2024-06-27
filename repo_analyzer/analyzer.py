@@ -22,12 +22,25 @@ def find_files_by_config(directory, patterns, include_hidden, valid_extensions):
     for root, _, files in os.walk(directory):
         if not include_hidden:
             files = [file for file in files if not file.startswith('.')]
-        for pattern in patterns:
-            for file in files:
-                if fnmatch.fnmatch(os.path.join(root, file), os.path.join(directory, pattern)) and os.path.splitext(file)[1] in valid_extensions:
+        for file in files:
+            if not patterns or any(fnmatch.fnmatch(os.path.join(root, file), os.path.join(directory, pattern)) for pattern in patterns):
+                if os.path.splitext(file)[1] in valid_extensions:
                     files_to_include.append(os.path.join(root, file))
 
-    return files_to_include
+    # Sort files_to_include according to the order in patterns
+    sorted_files = []
+    for pattern in patterns:
+        for file_path in files_to_include:
+            if fnmatch.fnmatch(file_path, os.path.join(directory, pattern)):
+                sorted_files.append(file_path)
+    
+    # Reverse the order to match the order specified by the user in the config file
+    if patterns:
+        sorted_files.reverse()
+    else:
+        sorted_files = files_to_include
+
+    return sorted_files
 
 def concatenate_files(files_to_include, output_file, max_chars, main_file=None):
     """

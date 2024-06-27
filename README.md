@@ -1,45 +1,59 @@
-Project: Repository Analyzer
+# Repository Summarizer for LLMs
 
-Description:
-The Repository Analyzer is a tool designed to analyze the structure and specific file types of a local repository. It generates a summary of the project, including a directory tree and concatenated contents of specified file types, highlighting the main file if specified.
+This tool combines the contents of a GitHub repository into a single text file, making it easier to use with Large Language Models (LLMs). It generates a summary of the project, including a directory tree and concatenated contents of specified files, with the option to prioritize a main file.
 
-Features:
-- Generate a directory tree up to a specified depth.
-- Concatenate contents of specified file types into a single output file.
-- Prioritize and highlight a main file for better contextual analysis.
-- Include dependencies of the main MATLAB file by analyzing function calls.
+## Features
 
-Usage:
-1. Clone or download the repository to your local machine.
-2. Ensure you have Python installed on your machine.
-3. Install the necessary Python packages using the command:
-   pip install -r requirements.txt
+- **Repository Summarization**: Combines the contents of a GitHub repository into a single text file for easy use with LLMs.
+- **Directory Tree Generation**: Provides a detailed directory tree structure of the repository.
+- **File Concatenation**: Concatenates specified files into an output file in the order listed in the configuration file.
+- **Main File Prioritization**: Prioritizes a specified main file in the output.
+- **Hidden Files Inclusion**: Optionally includes hidden files and directories.
+- **Pattern Matching**: Supports wildcard and regex entries for specifying file patterns.
+- **Customization**: Allows customization of maximum characters, tree depth, and items per directory.
 
-Running the Script:
-To run the Repository Analyzer, use the following command format:
+## Installation
 
-repo-analyzer <directory> [options]
+To install the necessary dependencies, run:
 
-Options:
-- directory: The path to the local repository to be analyzed.
-- --main_file: The main file to prioritize in the output (e.g., main.m).
-- --max_chars: Maximum number of characters to include in the output file.
-- --tree_depth: Maximum depth of the directory tree to include in the output file.
-- --include_hidden: Include hidden files and directories (use as a flag).
-- --max_items: Maximum number of items to include in each directory to avoid clutter.
+```sh
+pip install -r requirements.txt
+```
 
-Example:
-repo-analyzer /path/to/local/repo --main_file /path/to/local/repo/main.m --max_chars 10000 --tree_depth 5 --include_hidden --max_items 50
+## Usage
 
-Output:
-The script generates an output file in the specified directory with the name <directory>_summary.txt. The output file includes:
-- A directory tree structure.
-- Contents of the main file, if specified.
-- Concatenated contents of other specified file types.
+```sh
+python main.py [directory] [-m MAIN_FILE] [-c MAX_CHARS] [-t TREE_DEPTH] [-i] [-x MAX_ITEMS] [-n INCLUDE]
+```
 
-Project Structure:
-- repo_analyzer/
-  - __init__.py
-  - cli.py
-- README.txt (this file)
-- requirements.txt
+### Arguments
+
+- `directory` (str): The path to the local repository.
+- `-m`, `--main_file` (str): The main file to prioritize in the output.
+- `-c`, `--max_chars` (int): Maximum number of characters to include in the output file.
+- `-t`, `--tree_depth` (int): Maximum depth of the directory tree to include in the output file.
+- `-i`, `--include_hidden`: Include hidden files and directories.
+- `-x`, `--max_items` (int): Maximum number of items to include in each directory to avoid clutter.
+- `-n`, `--include` (str): Path to the configuration file with filename patterns to include in the output.
+
+### Example
+
+```sh
+python main.py /path/to/repository -m main.py -c 10000 -t 5 -i -x 100 -n config.txt
+```
+
+## Configuration File
+
+The configuration file should contain filename patterns to include in the output, one pattern per line. Wildcards and regex entries are supported.
+
+Example `config.txt`:
+
+```
+*.py
+*.md
+*.json
+```
+
+## Example Output
+
+To demonstrate the tool's functionality, we have run the tool on itself. You can find the generated summary [here](example.txt). 
