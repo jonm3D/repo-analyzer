@@ -38,12 +38,16 @@ jobs:
     - name: Run Flake8 and report issues
       run: |
         . venv/bin/activate
-        flake8 --max-line-length=88 repo_analyzer tests --format=default --output-file=flake8-report.txt || true
+        if [ -d "repo_analyzer" ]; then
+          flake8 --max-line-length=88 repo_analyzer --format=default --output-file=flake8-report.txt || true
+        fi
 
     - name: Format code with Black
       run: |
         . venv/bin/activate
-        black repo_analyzer tests
+        if [ -d "repo_analyzer" ]; then
+          black repo_analyzer
+        fi
 
     - name: Commit changes
       env:
