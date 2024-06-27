@@ -44,7 +44,7 @@ jobs:
     - name: Format code with Black
       run: |
         . venv/bin/activate
-        black openoceans tests
+        black repo-analyzer tests
 
     - name: Commit changes
       env:
