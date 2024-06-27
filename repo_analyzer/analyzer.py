@@ -22,14 +22,9 @@ def find_files_by_config(directory, patterns, include_hidden, valid_extensions):
     for root, _, files in os.walk(directory):
         if not include_hidden:
             files = [file for file in files if not file.startswith('.')]
-        if patterns:
-            for pattern in patterns:
-                for file in files:
-                    if fnmatch.fnmatch(os.path.join(root, file), os.path.join(directory, pattern)) and os.path.splitext(file)[1] in valid_extensions:
-                        files_to_include.append(os.path.join(root, file))
-        else:
+        for pattern in patterns:
             for file in files:
-                if os.path.splitext(file)[1] in valid_extensions:
+                if fnmatch.fnmatch(os.path.join(root, file), os.path.join(directory, pattern)) and os.path.splitext(file)[1] in valid_extensions:
                     files_to_include.append(os.path.join(root, file))
 
     return files_to_include
@@ -81,12 +76,12 @@ def main():
     """
     parser = argparse.ArgumentParser(description="Analyze the structure and specific file types of a local repository.")
     parser.add_argument("directory", type=str, help="The path to the local repository")
-    parser.add_argument("--main_file", type=str, help="The main file to prioritize in the output")
-    parser.add_argument("--max_chars", type=int, default=None, help="Maximum number of characters to include in the output file")
-    parser.add_argument("--tree_depth", type=int, default=10, help="Maximum depth of the directory tree to include in the output file")
-    parser.add_argument("--include_hidden", action='store_true', help="Include hidden files and directories")
-    parser.add_argument("--max_items", type=int, default=50, help="Maximum number of items to include in each directory to avoid clutter")
-    parser.add_argument("--config_file", type=str, help="Path to the configuration file with filename patterns to include in the output")
+    parser.add_argument("-m", "--main_file", type=str, help="The main file to prioritize in the output")
+    parser.add_argument("-c", "--max_chars", type=int, default=None, help="Maximum number of characters to include in the output file")
+    parser.add_argument("-t", "--tree_depth", type=int, default=10, help="Maximum depth of the directory tree to include in the output file")
+    parser.add_argument("-i", "--include_hidden", action='store_true', help="Include hidden files and directories")
+    parser.add_argument("-x", "--max_items", type=int, default=50, help="Maximum number of items to include in each directory to avoid clutter")
+    parser.add_argument("-n", "--include", type=str, help="Path to the configuration file with filename patterns to include in the output")
 
     args = parser.parse_args()
 
@@ -96,7 +91,7 @@ def main():
     tree_depth = args.tree_depth
     include_hidden = args.include_hidden
     max_items = args.max_items
-    config_file = args.config_file
+    config_file = args.include
 
     valid_extensions = {'.txt', '.py', '.md', '.json', '.xml', '.html', '.css', '.js', '.java', '.cpp', '.c', '.hpp', '.h', '.m', 'ipynb'}
 
