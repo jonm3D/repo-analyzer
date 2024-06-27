@@ -56,4 +56,4 @@ Example `config.txt`:
 
 ## Example Output
 
-To demonstrate the tool's functionality, we have run the tool on itself. You can find the generated summary [here](example.txt). 
+Example output from the tool run on itself is included for reference.
