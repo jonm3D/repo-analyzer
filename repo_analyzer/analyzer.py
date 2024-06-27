@@ -5,13 +5,15 @@ import fnmatch
 from .file_ops import read_file, read_config_file
 from .tree import generate_tree
 
-def find_files_by_config(directory, patterns, include_hidden, valid_extensions):
+def find_files_by_config(directory, include_patterns, ignore_patterns, include_hidden, valid_extensions):
     """
-    Find and return a list of text and code files in the directory matching the patterns from the config file.
+    Find and return a list of text and code files in the directory matching the include patterns from the config file,
+    while excluding those matching the ignore patterns.
 
     Parameters:
     directory (str): The root directory to start searching for files.
-    patterns (list): List of filename patterns to include in the output.
+    include_patterns (list): List of filename patterns to include in the output.
+    ignore_patterns (list): List of filename patterns to exclude from the output.
     include_hidden (bool): Whether to include hidden files.
     valid_extensions (set): Set of valid file extensions to include.
 
@@ -23,19 +25,22 @@ def find_files_by_config(directory, patterns, include_hidden, valid_extensions):
         if not include_hidden:
             files = [file for file in files if not file.startswith('.')]
         for file in files:
-            if not patterns or any(fnmatch.fnmatch(os.path.join(root, file), os.path.join(directory, pattern)) for pattern in patterns):
+            file_path = os.path.join(root, file)
+            if any(fnmatch.fnmatch(file_path, os.path.join(directory, pattern)) for pattern in ignore_patterns):
+                continue
+            if not include_patterns or any(fnmatch.fnmatch(file_path, os.path.join(directory, pattern)) for pattern in include_patterns):
                 if os.path.splitext(file)[1] in valid_extensions:
-                    files_to_include.append(os.path.join(root, file))
+                    files_to_include.append(file_path)
 
-    # Sort files_to_include according to the order in patterns
+    # Sort files_to_include according to the order in include_patterns
     sorted_files = []
-    for pattern in patterns:
+    for pattern in include_patterns:
         for file_path in files_to_include:
             if fnmatch.fnmatch(file_path, os.path.join(directory, pattern)):
                 sorted_files.append(file_path)
-    
+
     # Reverse the order to match the order specified by the user in the config file
-    if patterns:
+    if include_patterns:
         sorted_files.reverse()
     else:
         sorted_files = files_to_include
@@ -95,6 +100,7 @@ def main():
     parser.add_argument("-i", "--include_hidden", action='store_true', help="Include hidden files and directories")
     parser.add_argument("-x", "--max_items", type=int, default=50, help="Maximum number of items to include in each directory to avoid clutter")
     parser.add_argument("-n", "--include", type=str, help="Path to the configuration file with filename patterns to include in the output")
+    parser.add_argument("-g", "--ignore", type=str, help="Path to the configuration file with filename patterns to exclude from the output")
 
     args = parser.parse_args()
 
@@ -104,18 +110,27 @@ def main():
     tree_depth = args.tree_depth
     include_hidden = args.include_hidden
     max_items = args.max_items
-    config_file = args.include
+    include_file = args.include
+    ignore_file = args.ignore
 
     valid_extensions = {'.txt', '.py', '.md', '.json', '.xml', '.html', '.css', '.js', '.java', '.cpp', '.c', '.hpp', '.h', '.m', 'ipynb'}
 
-    if config_file:
-        config_file = os.path.abspath(config_file)
-        patterns = read_config_file(config_file)
-        if patterns is None or not patterns or all(name.isspace() for name in patterns):
-            print(f"Configuration file {config_file} not found, is empty, or only contains spaces.")
-            patterns = []
-    else:
-        patterns = []
+    include_patterns = []
+    ignore_patterns = []
+
+    if include_file:
+        include_file = os.path.abspath(include_file)
+        include_patterns = read_config_file(include_file)
+        if include_patterns is None or not include_patterns or all(name.isspace() for name in include_patterns):
+            print(f"Include file {include_file} not found, is empty, or only contains spaces.")
+            include_patterns = []
+
+    if ignore_file:
+        ignore_file = os.path.abspath(ignore_file)
+        ignore_patterns = read_config_file(ignore_file)
+        if ignore_patterns is None or not ignore_patterns or all(name.isspace() for name in ignore_patterns):
+            print(f"Ignore file {ignore_file} not found, is empty, or only contains spaces.")
+            ignore_patterns = []
 
     project_name = os.path.basename(directory)
     header = f"""
@@ -124,7 +139,10 @@ def main():
 Below is a summary of the project **{project_name}**, starting with the directory tree structure to provide an overview. This is followed by the main file, if specified, which serves as the primary runner for this tool. Use this main file to inform your understanding of all subsequent scripts, as it orchestrates the execution flow and primary logic of the project. Additional scripts have also been included for a comprehensive analysis of the tool.
 
 User-specified files to include:
-{', '.join(patterns) if patterns else 'None'}
+{', '.join(include_patterns) if include_patterns else 'None'}
+
+User-specified files to ignore:
+{', '.join(ignore_patterns) if ignore_patterns else 'None'}
 
 Please perform the following tasks:
 
@@ -152,7 +170,7 @@ Please perform the following tasks:
         outfile.write("\n\nConcatenated Files:\n")
 
     print(f"Finding files to concatenate in {directory}...")
-    files_to_include = find_files_by_config(directory, patterns, include_hidden, valid_extensions)
+    files_to_include = find_files_by_config(directory, include_patterns, ignore_patterns, include_hidden, valid_extensions)
 
     if not files_to_include:
         print("No files found to include based on the configuration.")

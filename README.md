@@ -1,4 +1,4 @@
-# Repository Summarizer for LLMs
+# RepoConcat
 
 This tool combines the contents of a GitHub repository into a single text file, making it easier to use with Large Language Models (LLMs). It generates a summary of the project, including a directory tree and concatenated contents of specified files, with the option to prioritize a main file.
 
@@ -10,6 +10,7 @@ This tool combines the contents of a GitHub repository into a single text file, 
 - **Main File Prioritization**: Prioritizes a specified main file in the output.
 - **Hidden Files Inclusion**: Optionally includes hidden files and directories.
 - **Pattern Matching**: Supports wildcard and regex entries for specifying file patterns.
+- **Ignore Patterns**: Supports excluding files or folders based on specified patterns.
 - **Customization**: Allows customization of maximum characters, tree depth, and items per directory.
 
 ## Installation
@@ -23,7 +24,7 @@ pip install -r requirements.txt
 ## Usage
 
 ```sh
-python main.py [directory] [-m MAIN_FILE] [-c MAX_CHARS] [-t TREE_DEPTH] [-i] [-x MAX_ITEMS] [-n INCLUDE]
+python main.py [directory] [-m MAIN_FILE] [-c MAX_CHARS] [-t TREE_DEPTH] [-i] [-x MAX_ITEMS] [-n INCLUDE] [-g IGNORE]
 ```
 
 ### Arguments
@@ -35,18 +36,21 @@ python main.py [directory] [-m MAIN_FILE] [-c MAX_CHARS] [-t TREE_DEPTH] [-i] [-
 - `-i`, `--include_hidden`: Include hidden files and directories.
 - `-x`, `--max_items` (int): Maximum number of items to include in each directory to avoid clutter.
 - `-n`, `--include` (str): Path to the configuration file with filename patterns to include in the output.
+- `-g`, `--ignore` (str): Path to the configuration file with filename patterns to exclude from the output.
 
 ### Example
 
 ```sh
-python main.py /path/to/repository -m main.py -c 10000 -t 5 -i -x 100 -n config.txt
+python main.py /path/to/repository -m main.py -c 10000 -t 5 -i -x 100 -n include.txt -g ignore.txt
 ```
 
-## Configuration File
+## Configuration Files
 
-The configuration file should contain filename patterns to include in the output, one pattern per line. Wildcards and regex entries are supported.
+### Include File
 
-Example `config.txt`:
+The include file should contain filename patterns to include in the output, one pattern per line. Wildcards and regex entries are supported.
+
+Example `include.txt`:
 
 ```
 *.py
@@ -54,6 +58,14 @@ Example `config.txt`:
 *.json
 ```
 
-## Example Output
+### Ignore File
 
-Example output from the tool run on itself is included for reference.
+The ignore file should contain filename patterns to exclude from the output, one pattern per line. Wildcards and regex entries are supported.
+
+Example `ignore.txt`:
+
+```
+*.test.py
+tests/
+docs/
+```
